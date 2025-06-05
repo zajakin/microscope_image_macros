@@ -1,0 +1,51 @@
+  function action(inputFolder,outputFolder,filename) {
+    open(inputFolder + filename);
+    roiManager("Reset");
+    setOption("BlackBackground", false);
+  
+    //image = getTitle();
+    Overlay.remove;
+    //Filtering
+  	run("Subtract Background...", "rolling=500 light sliding");
+    run("Morphological Filters", "operation=Gradient element=Disk radius=2");
+    run("Median...", "radius=5");
+    setAutoThreshold("Otsu Light");
+    run("Convert to Mask");
+  	run("Remove Outliers...", "radius=15 threshold=0"); // which=Dark
+    rename("Mask");
+    run("EDM Binary Operations", "iterations=5 operation=close"); //BioVoxxel
+    //Connected component analysis
+    run("Analyze Particles...", "size=20000-Infinity include show=Nothing add");
+  	run("Fill Holes");
+    //close("Mask");
+    //Measure on the original image
+    open(inputFolder + filename);
+    selectImage(filename);
+    roiManager("Show all");
+    roiManager("Measure");
+    call("java.lang.System.gc");
+  };
+  
+  call("java.lang.System.gc");
+  run("Clear Results");
+  inputFolder = getDirectory("Choose the input folder!");
+  outputFolder = getDirectory("Choose the output folder!");
+  //Delete the next line if you want to see how the macro works on the images. However that will reduce processing speed.
+  //setBatchMode(true);
+  images = getFileList(inputFolder);
+  //Sets the measurements that are recorded for each spheroid
+  //run("Set Measurements...", "area centroid shape feret's display add redirect=None decimal=1");
+  run("Set Measurements...", "area mean standard skewness kurtosis display redirect=None decimal=3");
+  //That is the cycle that runs through all images
+  for (i=0; i<images.length; i++) { 
+   action(inputFolder,outputFolder,images[i]);
+   showProgress(i, images.length);
+  };
+  //Writes in the Results and Summary windows and saves the data.
+  selectWindow("Results");
+  saveAs("Measurements", "" + outputFolder + "Results.txt");
+  //selectWindow("Summary"); 
+  //saveAs("Text", "" + outputFolder +"Summary.txt");
+  setBatchMode(false);
+
+
