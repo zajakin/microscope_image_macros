@@ -1,5 +1,5 @@
 FROM debian:buster-slim
-# docker run --rm -it debian:buster-slim bash
+# docker run --rm -it debian:buster-slim bash 
 RUN sed -i 's/main$/main contrib non-free non-free-firmware/' /etc/apt/sources.list && \
   env DEBIAN_FRONTEND=noninteractive apt-get update && \
 	env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils whiptail && \
