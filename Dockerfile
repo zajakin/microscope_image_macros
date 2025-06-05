@@ -60,7 +60,7 @@ RUN mkdir -p /home/fiji/spheroids/ /home/fiji/public && \
   cd /home/fiji && \
   wget -nv https://downloads.imagej.net/fiji/latest/fiji-latest-linux-arm64-jre.zip && \
   unzip fiji-latest-linux-arm64-jre.zip && \
-	rm fiji-latest-linux-arm64-jre.zip
+	rm fiji-latest-linux-arm64-jre.zip && \
   ln -sfn /usr/local/bin/deep-tumour-spheroid /home/fiji/spheroids/deep-tumour-spheroid
 COPY spheroids/* /home/fuji/spheroids/
 CMD ["/usr/bin/supervisord"]
