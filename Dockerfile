@@ -6,7 +6,7 @@ RUN sed -i 's/main$/main contrib non-free non-free-firmware/' /etc/apt/sources.l
 	env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends && \
 	env DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --no-install-recommends && \
 	env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-		python3 python3-pip python3-setuptools python3-dev python3-venv python3-wheel \
+		python3 python3-pip python3-setuptools python3-dev python3-numpy python3-venv python3-wheel \
 		locales sudo mc curl wget htop nginx-light libnginx-mod-http-auth-pam \
 		ssh mosh tmux supervisor bash-completion gpm bzip2 geany unzip \
 		at-spi2-core lxqt-policykit dbus-x11 firefox-esr gpicview fonts-firacode \
@@ -39,13 +39,13 @@ RUN echo 'gtk-theme-name="Raleigh"\ngtk-icon-theme-name="nuoveXT2"\n' > /etc/ske
   ln -sfn /home/fiji/public /usr/share/novnc/public && \
   ln -sfn /home/fiji /usr/share/novnc/home && \
   sed -i "s/UI.initSetting('resize', 'off');/UI.initSetting('resize', 'remote');/g" /usr/share/novnc/app/ui.js && \
-	useradd -G sudo -d /home/fiji -s /bin/bash -m fiji -U fiji && \
+  useradd -G sudo -d /home/fiji -s /bin/bash -m -U fiji && \
 	echo "fiji:fijipass" | chpasswd && \
 	mkdir -p /home/fiji/.vnc && \
 	echo fijipass | vncpasswd -f > /home/fiji/.vnc/passwd && \
 	cp -r -n /etc/skel/.[!.]* /home/fiji && \
-  chown -R fiji /home/fiji && \
-	xhost +si:localuser:root
+  chown -R fiji /home/fiji
+	#xhost +si:localuser:root
 COPY supervisor/* /etc/supervisor/conf.d/
 COPY nginx.conf /etc/nginx/nginx.conf
 ENV NOTVISIBLE "in users profile"
@@ -55,12 +55,12 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.utf8 UTF-8/' /etc/locale.gen && \
 	locale-gen && \
 	mkdir -p /run/sshd /var/log/supervisor && \
 	echo "export VISIBLE=now" >> /etc/profile
-USER fiji:fiji
-RUN mkdir -p /home/fiji/spheroids/ /home/fiji/public && \
+#USER fiji:fiji
+RUN su fiji && mkdir -p /home/fiji/spheroids/ /home/fiji/public && \
   cd /home/fiji && \
-  wget -nv https://downloads.imagej.net/fiji/latest/fiji-latest-linux-arm64-jre.zip && \
-  unzip fiji-latest-linux-arm64-jre.zip && \
-	rm fiji-latest-linux-arm64-jre.zip && \
+#  wget -nv https://downloads.imagej.net/fiji/latest/fiji-latest-linux-arm64-jre.zip && \
+#  unzip fiji-latest-linux-arm64-jre.zip && \
+#	rm fiji-latest-linux-arm64-jre.zip && \
   ln -sfn /usr/local/bin/deep-tumour-spheroid /home/fiji/spheroids/deep-tumour-spheroid
-COPY spheroids/* /home/fuji/spheroids/
+COPY spheroids/* /home/fiji/spheroids/
 CMD ["/usr/bin/supervisord"]

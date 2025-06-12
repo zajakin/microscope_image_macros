@@ -1,5 +1,6 @@
   function action(inputFolder,outputFolder,filename) {
     open(inputFolder + filename);
+    run("Invert");
     roiManager("Reset");
     setOption("BlackBackground", false);
   
