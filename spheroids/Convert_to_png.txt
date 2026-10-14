@@ -1,0 +1,15 @@
+  call("java.lang.System.gc");
+  inputFolder = getDirectory("Choose the input folder!");
+  outputFolder = getDirectory("Choose the output folder!");
+  setBatchMode(true);
+  images = getFileList(inputFolder);
+  for (i=0; i<images.length; i++) { 
+   //action(inputFolder,outputFolder,images[i]);
+   open(inputFolder + images[i]);
+   selectImage(images[i]);
+   saveAs("PNG",outputFolder + images[i] + ".png");
+   close(images[i] + ".png");
+  };
+  setBatchMode(false);
+
+
